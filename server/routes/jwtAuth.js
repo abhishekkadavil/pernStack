@@ -11,7 +11,8 @@ router.post("/register", validReginfo, async(req,res) => {
     try {
 
         //destructure - json parser
-        const {name, email, password} = req.body;
+        const {fullname, email, password} = req.body;
+        console.log(fullname);
 
         //check if the user exist
         const user = await pool.query("SELECT * FROM public.morpheus_users WHERE user_email = $1",[email]);
@@ -28,7 +29,7 @@ router.post("/register", validReginfo, async(req,res) => {
 
         //insert new user into DB
         const newUser = await pool.query(
-            "INSERT INTO public.morpheus_users (user_name, user_email, user_password) VALUES($1, $2, $3) RETURNING *",[name, email, bcryptpassword]
+            "INSERT INTO public.morpheus_users (user_name, user_email, user_password) VALUES($1, $2, $3) RETURNING *",[fullname, email, bcryptpassword]
             );
         
         //return inserted data using RETURNING * in the query
@@ -42,7 +43,7 @@ router.post("/register", validReginfo, async(req,res) => {
         
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Server error");
+        res.status(500).send("Server error"+err.message);
     }
 });
 
